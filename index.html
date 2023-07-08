@@ -1,1 +1,109 @@
-Hello World
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Calculator 2 Number</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f1f1f1;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 400px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #ffffff;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .header {
+      text-align: center;
+      color: #333333;
+    }
+
+    .input-group {
+      margin-bottom: 10px;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 5px;
+      color: #666666;
+    }
+
+    .input-group input[type="number"],
+    .input-group select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #cccccc;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+
+    .result {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  </style>
+  <script>
+    function calculate() {
+      var firstNumber = parseFloat(document.getElementById('first').value);
+      var secondNumber = parseFloat(document.getElementById('second').value);
+      var method = document.getElementById('method').value;
+      var result;
+
+      switch (method) {
+        case '+':
+          result = firstNumber + secondNumber;
+          break;
+        case '-':
+          result = firstNumber - secondNumber;
+          break;
+        case '*':
+          result = firstNumber * secondNumber;
+          break;
+        case '/':
+          result = firstNumber / secondNumber;
+          break;
+        default:
+          result = 0;
+          break;
+      }
+
+      document.getElementById('result').textContent = result;
+    }
+  </script>
+</head>
+<body>
+  <div class="container">
+    <h1 class="header">Calculator</h1>
+    <div class="input-group">
+      <label for="first">First Number</label>
+      <input type="number" id="first" onkeyup="calculate()" value="" placeholder="0">
+    </div>
+    <div class="input-group">
+      <label for="second">Second Number</label>
+      <input type="number" id="second" onkeyup="calculate()" value="" placeholder="0">
+    </div>
+    <div class="input-group">
+      <label for="method">Method</label>
+      <select id="method" onchange="calculate()">
+        <option value="+">+</option>
+        <option value="-">-</option>
+        <option value="*">*</option>
+        <option value="/">/</option>
+      </select>
+    </div>
+    <div class="input-group">
+      <label for="result">Result</label>
+      <span id="result" class="result">0</span>
+    </div>
+  </div>
+</body>
+</html>
