@@ -1,118 +1,36 @@
-<!DOCTYPE html>
 <html lang="en">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Calculator 2 Number</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f1f1f1;
-      margin: 0;
-      padding: 0;
-    }
+  <link rel="shortcut icon" href="images/gift.png" type="image/x-icon">
+  <link rel="stylesheet" href="css/index.css">
 
-    .container {
-      max-width: 400px;
-      margin: 0 auto;
-      padding: 20px;
-      background-color: #ffffff;
-      box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-    }
-
-    .header {
-      text-align: center;
-      color: #333333;
-    }
-
-    .input-group {
-      margin-bottom: 10px;
-    }
-
-    .input-group label {
-      display: block;
-      margin-bottom: 5px;
-      color: #666666;
-    }
-
-    .input-group input[type="number"],
-    .input-group select {
-      width: 100%;
-      padding: 8px;
-      border: 1px solid #cccccc;
-      border-radius: 4px;
-      font-size: 16px;
-    }
-
-    .result {
-      display: block;
-      margin-top: 10px;
-      font-weight: bold;
-    }
-  </style>
-  <script>
-    function calculate() {
-      var firstNumber = parseFloat(document.getElementById('first').value);
-      var secondNumber = parseFloat(document.getElementById('second').value);
-      var method = document.getElementById('method').value;
-      var result;
-
-      switch (method) {
-        case '+':
-          result = firstNumber + secondNumber;
-          break;
-        case '-':
-          result = firstNumber - secondNumber;
-          break;
-        case '*':
-          result = firstNumber * secondNumber;
-          break;
-        case '/':
-          result = firstNumber / secondNumber;
-          break;
-        default:
-          result = 0;
-          break;
-      }
-
-      document.getElementById('result').textContent = result;
-    }
-  </script>
+  <!-- Document Title -->
+  <title>I Have Something</title>
 </head>
 
 <body>
-  <div class="container">
-    <h1 class="header">Calculator</h1>
-    <div class="input-group">
-      <label for="first">First Number</label>
-      <input type="number" id="first" onkeyup="calculate()" value="" placeholder="0">
-    </div>
-    <div class="input-group">
-      <label for="second">Second Number</label>
-      <input type="number" id="second" onkeyup="calculate()" value="" placeholder="0">
-    </div>
-    <div class="input-group">
-      <label for="method">Method</label>
-      <select id="method" onchange="calculate()">
-        <option value="+">+</option>
-        <option value="-">-</option>
-        <option value="*">*</option>
-        <option value="/">/</option>
-      </select>
-    </div>
-    <div class="input-group">
-      <label for="result">Result</label>
-      <span id="result" class="result">0</span>
-    </div>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8364078254554836" crossorigin="anonymous"></script>
-    <!-- Test -->
-    <ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-8364078254554836" data-ad-slot="8829622069"></ins>
-    <script>
-      (adsbygoogle = window.adsbygoogle || []).push({});
-    </script>
+  <!-- Background -->
+  <div class="night"></div>
+
+  <!-- Title -->
+  <h1 class="title"></h1>
+
+  <!-- Button -->
+  <div style="position: absolute; top: 60vh; width: 100%; display: flex; justify-content: center;">
+    <a href="flower.html" class="btn">
+      <svg height="24" width="24" fill="#FFFFFF" viewBox="0 0 24 24" data-name="Layer 1" id="Layer_1" class="sparkle">
+        <path
+          d="M10,21.236,6.755,14.745.264,11.5,6.755,8.255,10,1.764l3.245,6.491L19.736,11.5l-6.491,3.245ZM18,21l1.5,3L21,21l3-1.5L21,18l-1.5-3L18,18l-3,1.5ZM19.333,4.667,20.5,7l1.167-2.333L24,3.5,21.667,2.333,20.5,0,19.333,2.333,17,3.5Z">
+        </path>
+      </svg>
+
+      <span class="text">Open</span>
+    </a>
   </div>
+
+  <script src="js/index.js"></script>
 </body>
 
 </html>
