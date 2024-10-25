@@ -28,29 +28,13 @@
             </div>
         </div>
         <ul id="taskList">
-            <li class="flex items-center mb-2">
-                <input type="checkbox" class="form-checkbox h-5 w-5 text-purple-500" checked onclick="toggleTask(this)">
-                <span class="ml-2 line-through text-gray-400">Read recommended book again</span>
-                <button class="ml-auto text-red-500" onclick="removeTask(this)"><i class="fas fa-trash"></i></button>
-            </li>
-            <li class="flex items-center mb-2">
-                <input type="checkbox" class="form-checkbox h-5 w-5 text-purple-500" onclick="toggleTask(this)">
-                <span class="ml-2">Vacation planning</span>
-                <button class="ml-auto text-red-500" onclick="removeTask(this)"><i class="fas fa-trash"></i></button>
-            </li>
-            <li class="flex items-center mb-2">
-                <input type="checkbox" class="form-checkbox h-5 w-5 text-purple-500" onclick="toggleTask(this)">
-                <span class="ml-2">Cook dinner</span>
-                <button class="ml-auto text-red-500" onclick="removeTask(this)"><i class="fas fa-trash"></i></button>
-            </li>
-            <li class="flex items-center mb-2">
-                <input type="checkbox" class="form-checkbox h-5 w-5 text-purple-500" onclick="toggleTask(this)">
-                <span class="ml-2">Sign up for training</span>
-                <button class="ml-auto text-red-500" onclick="removeTask(this)"><i class="fas fa-trash"></i></button>
-            </li>
+            <!-- Tasks will be dynamically added here -->
         </ul>
         <button class="fixed bottom-10 right-10 bg-purple-500 text-white p-4 rounded-full text-2xl" onclick="showAddTaskCard()">
             <i class="fas fa-plus"></i>
+        </button>
+        <button class="fixed bottom-10 left-10 bg-red-500 text-white p-4 rounded-full text-2xl" onclick="downloadTasks()">
+            <i class="fas fa-file-download"></i>
         </button>
     </div>
 
@@ -65,7 +49,16 @@
         </div>
     </div>
 
+    <div id="notification" class="fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-md hidden">
+        <span id="notificationMessage"></span>
+        <button class="ml-4" onclick="hideNotification()">X</button>
+    </div>
+
     <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            loadTasks();
+        });
+
         function showAddTaskCard() {
             document.getElementById('addTaskCard').classList.remove('hidden');
         }
@@ -74,9 +67,33 @@
             document.getElementById('addTaskCard').classList.add('hidden');
         }
 
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            const notificationMessage = document.getElementById('notificationMessage');
+            notificationMessage.textContent = message;
+            notification.classList.remove('hidden');
+            setTimeout(hideNotification, 10000);
+        }
+
+        function hideNotification() {
+            document.getElementById('notification').classList.add('hidden');
+        }
+
         function addTask() {
             const taskList = document.getElementById('taskList');
-            const newTaskText = document.getElementById('newTaskInput').value;
+            const newTaskText = document.getElementById('newTaskInput').value.trim();
+            const existingTasks = Array.from(taskList.querySelectorAll('span')).map(task => task.textContent.trim());
+
+            if (newTaskText === "") {
+                showNotification("Task cannot be empty.");
+                return;
+            }
+
+            if (existingTasks.includes(newTaskText)) {
+                showNotification("Task already exists.");
+                return;
+            }
+
             if (newTaskText) {
                 const newTask = document.createElement('li');
                 newTask.className = 'flex items-center mb-2';
@@ -88,12 +105,14 @@
                 taskList.appendChild(newTask);
                 document.getElementById('newTaskInput').value = '';
                 hideAddTaskCard();
+                saveTasks();
             }
         }
 
         function removeTask(button) {
             const task = button.parentElement;
             task.remove();
+            saveTasks();
         }
 
         function toggleTask(checkbox) {
@@ -103,6 +122,7 @@
             } else {
                 taskText.classList.remove('line-through', 'text-gray-400');
             }
+            saveTasks();
         }
 
         function filterTasks() {
@@ -139,6 +159,43 @@
             });
             document.getElementById('dropdownButton').innerHTML = `${status.toUpperCase()} <i class="fas fa-chevron-down ml-2"></i>`;
             toggleDropdown();
+        }
+
+        function saveTasks() {
+            const tasks = [];
+            document.querySelectorAll('#taskList li').forEach(task => {
+                const taskText = task.querySelector('span').textContent;
+                const isChecked = task.querySelector('input[type="checkbox"]').checked;
+                tasks.push({ text: taskText, checked: isChecked });
+            });
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+        }
+
+        function loadTasks() {
+            const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+            const taskList = document.getElementById('taskList');
+            taskList.innerHTML = '';
+            tasks.forEach(task => {
+                const newTask = document.createElement('li');
+                newTask.className = 'flex items-center mb-2';
+                newTask.innerHTML = `
+                    <input type="checkbox" class="form-checkbox h-5 w-5 text-purple-500" ${task.checked ? 'checked' : ''} onclick="toggleTask(this)">
+                    <span class="ml-2 ${task.checked ? 'line-through text-gray-400' : ''}">${task.text}</span>
+                    <button class="ml-auto text-red-500" onclick="removeTask(this)"><i class="fas fa-trash"></i></button>
+                `;
+                taskList.appendChild(newTask);
+            });
+        }
+
+        function downloadTasks() {
+            const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(tasks));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", "tasks.json");
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
         }
     </script>
 </body>
