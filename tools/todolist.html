@@ -1,0 +1,145 @@
+<html>
+<head>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+    <div class="w-full max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
+        <h1 class="text-center text-2xl font-bold mb-6">TODO LIST</h1>
+        <div class="flex items-center mb-4">
+            <div class="relative flex-grow">
+                <input type="text" id="searchInput" placeholder="Search note..." class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" oninput="filterTasks()">
+                <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+            </div>
+            <div class="ml-4 relative">
+                <button id="dropdownButton" class="bg-purple-500 text-white px-4 py-2 rounded-lg flex items-center" onclick="toggleDropdown()">
+                    ALL <i class="fas fa-chevron-down ml-2"></i>
+                </button>
+                <div id="dropdownMenu" class="absolute right-0 mt-2 w-32 bg-white border rounded-lg shadow-lg hidden">
+                    <button class="block w-full text-left px-4 py-2 hover:bg-gray-100" onclick="filterByStatus('all')">ALL</button>
+                    <button class="block w-full text-left px-4 py-2 hover:bg-gray-100" onclick="filterByStatus('done')">DONE</button>
+                    <button class="block w-full text-left px-4 py-2 hover:bg-gray-100" onclick="filterByStatus('todo')">TODO</button>
+                </div>
+            </div>
+            <div class="ml-4">
+                <button class="text-purple-500 text-2xl">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+        </div>
+        <ul id="taskList">
+            <li class="flex items-center mb-2">
+                <input type="checkbox" class="form-checkbox h-5 w-5 text-purple-500" checked onclick="toggleTask(this)">
+                <span class="ml-2 line-through text-gray-400">Read recommended book again</span>
+                <button class="ml-auto text-red-500" onclick="removeTask(this)"><i class="fas fa-trash"></i></button>
+            </li>
+            <li class="flex items-center mb-2">
+                <input type="checkbox" class="form-checkbox h-5 w-5 text-purple-500" onclick="toggleTask(this)">
+                <span class="ml-2">Vacation planning</span>
+                <button class="ml-auto text-red-500" onclick="removeTask(this)"><i class="fas fa-trash"></i></button>
+            </li>
+            <li class="flex items-center mb-2">
+                <input type="checkbox" class="form-checkbox h-5 w-5 text-purple-500" onclick="toggleTask(this)">
+                <span class="ml-2">Cook dinner</span>
+                <button class="ml-auto text-red-500" onclick="removeTask(this)"><i class="fas fa-trash"></i></button>
+            </li>
+            <li class="flex items-center mb-2">
+                <input type="checkbox" class="form-checkbox h-5 w-5 text-purple-500" onclick="toggleTask(this)">
+                <span class="ml-2">Sign up for training</span>
+                <button class="ml-auto text-red-500" onclick="removeTask(this)"><i class="fas fa-trash"></i></button>
+            </li>
+        </ul>
+        <button class="fixed bottom-10 right-10 bg-purple-500 text-white p-4 rounded-full text-2xl" onclick="showAddTaskCard()">
+            <i class="fas fa-plus"></i>
+        </button>
+    </div>
+
+    <div id="addTaskCard" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
+            <h2 class="text-xl font-bold mb-4">Add New Task</h2>
+            <input type="text" id="newTaskInput" placeholder="Enter new task..." class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 mb-4">
+            <div class="flex justify-end">
+                <button class="bg-gray-500 text-white px-4 py-2 rounded-lg mr-2" onclick="hideAddTaskCard()">Cancel</button>
+                <button class="bg-purple-500 text-white px-4 py-2 rounded-lg" onclick="addTask()">Add Task</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showAddTaskCard() {
+            document.getElementById('addTaskCard').classList.remove('hidden');
+        }
+
+        function hideAddTaskCard() {
+            document.getElementById('addTaskCard').classList.add('hidden');
+        }
+
+        function addTask() {
+            const taskList = document.getElementById('taskList');
+            const newTaskText = document.getElementById('newTaskInput').value;
+            if (newTaskText) {
+                const newTask = document.createElement('li');
+                newTask.className = 'flex items-center mb-2';
+                newTask.innerHTML = `
+                    <input type="checkbox" class="form-checkbox h-5 w-5 text-purple-500" onclick="toggleTask(this)">
+                    <span class="ml-2">${newTaskText}</span>
+                    <button class="ml-auto text-red-500" onclick="removeTask(this)"><i class="fas fa-trash"></i></button>
+                `;
+                taskList.appendChild(newTask);
+                document.getElementById('newTaskInput').value = '';
+                hideAddTaskCard();
+            }
+        }
+
+        function removeTask(button) {
+            const task = button.parentElement;
+            task.remove();
+        }
+
+        function toggleTask(checkbox) {
+            const taskText = checkbox.nextElementSibling;
+            if (checkbox.checked) {
+                taskText.classList.add('line-through', 'text-gray-400');
+            } else {
+                taskText.classList.remove('line-through', 'text-gray-400');
+            }
+        }
+
+        function filterTasks() {
+            const searchInput = document.getElementById('searchInput').value.toLowerCase();
+            const tasks = document.querySelectorAll('#taskList li');
+            tasks.forEach(task => {
+                const taskText = task.querySelector('span').textContent.toLowerCase();
+                if (taskText.includes(searchInput)) {
+                    task.style.display = '';
+                } else {
+                    task.style.display = 'none';
+                }
+            });
+        }
+
+        function toggleDropdown() {
+            const dropdownMenu = document.getElementById('dropdownMenu');
+            dropdownMenu.classList.toggle('hidden');
+        }
+
+        function filterByStatus(status) {
+            const tasks = document.querySelectorAll('#taskList li');
+            tasks.forEach(task => {
+                const checkbox = task.querySelector('input[type="checkbox"]');
+                if (status === 'all') {
+                    task.style.display = '';
+                } else if (status === 'done' && checkbox.checked) {
+                    task.style.display = '';
+                } else if (status === 'todo' && !checkbox.checked) {
+                    task.style.display = '';
+                } else {
+                    task.style.display = 'none';
+                }
+            });
+            document.getElementById('dropdownButton').innerHTML = `${status.toUpperCase()} <i class="fas fa-chevron-down ml-2"></i>`;
+            toggleDropdown();
+        }
+    </script>
+</body>
+</html>
