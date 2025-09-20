@@ -77,48 +77,48 @@ window.addEventListener('mousedown', (event) => {
 
     breakBlockStreak++;
     if (breakBlockStreak >= 3) {
-        const text = document.getElementById("npc-text")
-        const message = "You should not have done that...";
+      const text = document.getElementById("npc-text")
+      const message = "You should not have done that...";
 
-        if (text.textContent !== message && (text.textContent === "Hahaha! Gotcha!" || text.textContent === "Press the button. I dare you.")) {
-            let char = 0;
-            let done = false;
-            text.textContent = "";
+      if (text.textContent !== message && (text.textContent === "Hahaha! Gotcha!" || text.textContent === "Press the button. I dare you.")) {
+        let char = 0;
+        let done = false;
+        text.textContent = "";
 
-            function type() {
-                if (done) return;
+        function type() {
+          if (done) return;
 
-                if (char < message.length) {
-                    text.textContent += message[char++];
-                    setTimeout(type, 40);
-                } else {
-                    setTimeout(() => {
-                        char = 0;
-                        done = true;
-                        type();
-                    }, 1000);
-                }
-            }
-            type();
-            breakBlockStreak = 0;
+          if (char < message.length) {
+            text.textContent += message[char++];
+            setTimeout(type, 40);
+          } else {
+            setTimeout(() => {
+              char = 0;
+              done = true;
+              type();
+            }, 1000);
+          }
         }
-    }
-    }
-    else {
+        type();
         breakBlockStreak = 0;
+      }
     }
+  }
+  else {
+    breakBlockStreak = 0;
+  }
 
 });
 
 function blockBreakSound() {
-    const sounds = ["assets/breaks/glass_00{0}.ogg", "assets/breaks/select_00{0}.ogg",6, 8]
+  const sounds = ["assets/breaks/glass_00{0}.ogg", "assets/breaks/select_00{0}.ogg", 6, 8]
 
-    const sfx = new Audio();
-    const index = Math.floor(Math.random() * (sounds.length - 2));
-    sfx.src = sounds[index].replace("{0}", Math.floor(Math.random() * (index * 2)) + 1);
-    sfx.volume = 1;
-    sfx.playbackRate = Math.random() * 0.3 + 0.85;
-    sfx.play();
+  const sfx = new Audio();
+  const index = Math.floor(Math.random() * (sounds.length - 2));
+  sfx.src = sounds[index].replace("{0}", Math.floor(Math.random() * (index * 2)) + 1);
+  sfx.volume = 1;
+  sfx.playbackRate = Math.random() * 0.3 + 0.85;
+  sfx.play();
 }
 
 function spawnParticles(position, color = 0xffffff) {
@@ -206,14 +206,14 @@ const talkToNpc = () => {
         setTimeout(type, 40);
       } else {
         setTimeout(() => {
-            if (i < messages.length - 1) text.textContent = "";
-            i++; char = 0;
-            // setTimeout(type, 50);
-            type();
+          if (i < messages.length - 1) text.textContent = "";
+          i++; char = 0;
+          // setTimeout(type, 50);
+          type();
         }, 1000);
       }
     } else {
-        ah_btn.classList.remove("hidden");
+      ah_btn.classList.remove("hidden");
     }
   }
 
@@ -222,7 +222,7 @@ const talkToNpc = () => {
 talkToNpc();
 
 // Konami
-const konami = [38,38,40,40,37,39,37,39,66,65]; // ↑ ↑ ↓ ↓ ← → ← → B A
+const konami = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65]; // ↑ ↑ ↓ ↓ ← → ← → B A
 let buffer = [];
 
 window.addEventListener("keydown", (e) => {
@@ -253,18 +253,33 @@ window.rick = async () => {
   ah_btn.classList.add("hidden");
 
   const audio = document.getElementById("ah-audio");
-    audio.currentTime = 0;
-    audio.volume = 1;
-    audio.play().catch(e => {
+  audio.currentTime = 0;
+  audio.volume = 1;
+  audio.play().catch(e => {
     console.warn("Autoplay failed, waiting for user interaction.");
-    });
+  });
 
 
   animationPaused = true;
   voxelBlocks.forEach(block => block.visible = false); // hide voxel world
   rickPlane.visible = true;
 
-  const txt = await fetch(window.location.href.replace("/index.html", "")+"/rick.txt").then(r => r.text());
+  const url = new URL(window.location.href);
+
+  if (url.pathname.endsWith("index.html")) {
+    url.pathname = url.pathname.replace(/index\.html$/, "");
+  }
+
+  url.pathname = url.pathname.replace(/\/$/, "") + "/rick.txt";
+
+  const response = await fetch(url.toString(), { method: "GET" });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! Status: ${response.status}`);
+  }
+
+  const txt = await response.text();
+
   const lines = txt.split("\n");
   const frameHeight = 36;
   const totalFrames = Math.floor(lines.length / frameHeight);
